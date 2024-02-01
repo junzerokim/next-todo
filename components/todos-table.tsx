@@ -37,7 +37,6 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       cache: 'no-store',
     });
     console.log(`할 일 추가 완료 : ${newTodoInput}`);
-    setNewTodoInput('');
     router.refresh(); // POST 요청 후 페이지 새로고침
   };
 
