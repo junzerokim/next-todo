@@ -15,6 +15,7 @@ import {
   PopoverContent,
 } from '@nextui-org/react';
 import { Todo } from '@/types';
+import { useRouter } from 'next/navigation';
 
 const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 할 일 추가 가능 여부
@@ -22,6 +23,23 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
 
   // 입력된 할 일
   const [newTodoInput, setNewTodoInput] = useState('');
+
+  const router = useRouter();
+
+  const addTodoHandler = async (title: string) => {
+    if (!todoAddEnable) return;
+
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
+      method: 'POST',
+      body: JSON.stringify({
+        title: title,
+      }),
+      cache: 'no-store',
+    });
+    console.log(`할 일 추가 완료 : ${newTodoInput}`);
+    setNewTodoInput('');
+    router.refresh(); // POST 요청 후 페이지 새로고침
+  };
 
   const disabledTodoAddButton = () => {
     return (
@@ -62,7 +80,13 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           }}
         />
         {todoAddEnable ? (
-          <Button color="secondary" className="h-14">
+          <Button
+            color="secondary"
+            className="h-14"
+            onPress={async () => {
+              await addTodoHandler(newTodoInput);
+            }}
+          >
             Add
           </Button>
         ) : (
