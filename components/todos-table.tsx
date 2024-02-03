@@ -13,16 +13,19 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Spinner,
 } from '@nextui-org/react';
 import { Todo } from '@/types';
 import { useRouter } from 'next/navigation';
 
 const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 할 일 추가 가능 여부
-  const [todoAddEnable, setTodoAddEnable] = useState(false);
+  const [todoAddEnable, setTodoAddEnable] = useState<Boolean>(false);
 
   // 입력된 할 일
   const [newTodoInput, setNewTodoInput] = useState('');
+
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   const router = useRouter();
 
@@ -93,6 +96,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           disabledTodoAddButton()
         )}
       </div>
+      {isLoading && <Spinner color="secondary" />}
       <Table aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>ID</TableColumn>
