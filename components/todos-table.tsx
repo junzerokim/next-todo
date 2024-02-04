@@ -31,7 +31,12 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
 
   const addTodoHandler = async (title: string) => {
     if (!todoAddEnable) return;
-
+    setTodoAddEnable(false); // 중복 클릭 방지
+    setIsLoading(true);
+    setTimeout(() => {
+      console.log('첫번째 메시지');
+    }, 5000);
+    await new Promise((f) => setTimeout(f, 3000));
     await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
       method: 'POST',
       body: JSON.stringify({
@@ -39,9 +44,14 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       }),
       cache: 'no-store',
     });
+    inputInit();
     console.log(`할 일 추가 완료 : ${newTodoInput}`);
+  };
+
+  const inputInit = () => {
     setNewTodoInput('');
     router.refresh(); // POST 요청 후 페이지 새로고침
+    setIsLoading(false);
   };
 
   const disabledTodoAddButton = () => {
@@ -71,7 +81,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     );
   };
   return (
-    <>
+    <div className="flex flex-col space-y-2">
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
         <Input
           type="text"
@@ -96,7 +106,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           disabledTodoAddButton()
         )}
       </div>
-      {isLoading && <Spinner color="secondary" />}
+      {isLoading && <Spinner size="md" color="secondary" />}
       <Table aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>ID</TableColumn>
@@ -111,7 +121,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
             })}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 };
 
