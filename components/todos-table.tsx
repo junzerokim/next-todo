@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Table,
   TableHeader,
@@ -80,8 +82,15 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       </TableRow>
     );
   };
+
+  const notify = () => toast('Wow so easy!');
+
   return (
     <div className="flex flex-col space-y-2">
+      <div>
+        <button onClick={notify}>Notify!</button>
+        <ToastContainer />
+      </div>
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
         <Input
           type="text"
