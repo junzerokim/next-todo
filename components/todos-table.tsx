@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Table,
@@ -38,7 +38,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     setTimeout(() => {
       console.log('첫번째 메시지');
     }, 5000);
-    await new Promise((f) => setTimeout(f, 3000));
+    await new Promise((f) => setTimeout(f, 1000));
     await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
       method: 'POST',
       body: JSON.stringify({
@@ -47,6 +47,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       cache: 'no-store',
     });
     inputInit();
+    notifyTodoAddedEvent('할 일이 성공적으로 추가되었습니다.');
     console.log(`할 일 추가 완료 : ${newTodoInput}`);
   };
 
@@ -83,14 +84,23 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     );
   };
 
-  const notify = () => toast('Wow so easy!');
+  const notifyTodoAddedEvent = (message: string) => toast.success(message);
 
   return (
     <div className="flex flex-col space-y-2">
-      <div>
-        <button onClick={notify}>Notify!</button>
-        <ToastContainer />
-      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={1800}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
         <Input
           type="text"
