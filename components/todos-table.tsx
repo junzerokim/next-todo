@@ -16,7 +16,18 @@ import {
   PopoverTrigger,
   PopoverContent,
   Spinner,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from '@nextui-org/react';
+import { VerticalDotsIcon } from './icons';
 import { Todo } from '@/types';
 import { useRouter } from 'next/navigation';
 
@@ -80,14 +91,74 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
         <TableCell>{todo.title}</TableCell>
         <TableCell>{todo.isDone ? '✅' : '📌'}</TableCell>
         <TableCell>{`${todo.createdAt}`}</TableCell>
+        <TableCell>
+          <div className="relative flex justify-end items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <VerticalDotsIcon className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem>View</DropdownItem>
+                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        </TableCell>
       </TableRow>
     );
   };
 
   const notifyTodoAddedEvent = (message: string) => toast.success(message);
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const ModalComponent = () => {
+    return (
+      <div>
+        <Button onPress={onOpen}>Open Modal</Button>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+                <ModalBody>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non risus hendrerit venenatis.
+                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                  </p>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non risus hendrerit venenatis.
+                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                  </p>
+                  <p>
+                    Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit dolor adipisicing. Mollit dolor
+                    eiusmod sunt ex incididunt cillum quis. Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor
+                    eiusmod. Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur proident Lorem eiusmod et. Culpa
+                    deserunt nostrud ad veniam.
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button color="primary" onPress={onClose}>
+                    Action
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col space-y-2">
+      <ModalComponent />
       <ToastContainer
         position="top-right"
         autoClose={1800}
@@ -132,6 +203,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           <TableColumn>TODO</TableColumn>
           <TableColumn>STATUS</TableColumn>
           <TableColumn>TIME</TableColumn>
+          <TableColumn>ACTION</TableColumn>
         </TableHeader>
         <TableBody emptyContent={'No rows to display.'}>
           {todos &&
