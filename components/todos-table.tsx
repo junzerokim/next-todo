@@ -28,8 +28,9 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import { VerticalDotsIcon } from './icons';
-import { Todo } from '@/types';
 import { useRouter } from 'next/navigation';
+import { FocusedTodoType, CustomModalType, Todo } from '@/types';
+import CustomModal from './custom-modal';
 
 const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 할 일 추가 가능 여부
@@ -38,7 +39,14 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 입력된 할 일
   const [newTodoInput, setNewTodoInput] = useState('');
 
+  // 로딩 여부
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+  // 띄우는 모달 여부
+  const [currentModalData, setCurrentModalData] = useState<FocusedTodoType>({
+    focusedTodo: null,
+    modalType: 'detail' as CustomModalType,
+  });
 
   const router = useRouter();
 
@@ -87,7 +95,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
   const TodoRow = (todo: Todo) => {
     return (
       <TableRow key={todo.id}>
-        <TableCell>{todo.id.slice(0, 4)}</TableCell>
+        <TableCell>{todo.id.slice(0, 3).toUpperCase()}</TableCell>
         <TableCell>{todo.title}</TableCell>
         <TableCell>{todo.isDone ? '✅' : '📌'}</TableCell>
         <TableCell>{`${todo.createdAt}`}</TableCell>
@@ -99,10 +107,16 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
                   <VerticalDotsIcon className="text-default-300" />
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+              <DropdownMenu
+                onAction={(key) => {
+                  console.log(`todo.id: ${todo.id} key: ${key}`);
+                  setCurrentModalData({ focusedTodo: todo, modalType: key as CustomModalType });
+                  onOpen();
+                }}
+              >
+                <DropdownItem key="detail">Detail</DropdownItem>
+                <DropdownItem key="edit">Edit</DropdownItem>
+                <DropdownItem key="delete">Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -117,42 +131,19 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
 
   const ModalComponent = () => {
     return (
-      <div>
-        <Button onPress={onOpen}>Open Modal</Button>
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
-                <ModalBody>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non risus hendrerit venenatis.
-                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non risus hendrerit venenatis.
-                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                  </p>
-                  <p>
-                    Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit dolor adipisicing. Mollit dolor
-                    eiusmod sunt ex incididunt cillum quis. Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor
-                    eiusmod. Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur proident Lorem eiusmod et. Culpa
-                    deserunt nostrud ad veniam.
-                  </p>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Action
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </div>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+        <ModalContent>
+          {(onClose) =>
+            currentModalData.focusedTodo && (
+              <CustomModal
+                focusedTodo={currentModalData.focusedTodo}
+                modalType={currentModalData.modalType}
+                onClose={onClose}
+              />
+            )
+          }
+        </ModalContent>
+      </Modal>
     );
   };
 
