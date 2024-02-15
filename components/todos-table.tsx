@@ -135,11 +135,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
         <ModalContent>
           {(onClose) =>
             currentModalData.focusedTodo && (
-              <CustomModal
-                focusedTodo={currentModalData.focusedTodo}
-                modalType={currentModalData.modalType}
-                onClose={onClose}
-              />
+              <CustomModal focusedTodo={currentModalData.focusedTodo} modalType={currentModalData.modalType} onClose={onClose} />
             )
           }
         </ModalContent>

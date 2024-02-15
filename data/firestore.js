@@ -41,14 +41,14 @@ export async function fetchTodos() {
     // doc.data() is never undefined for query doc snapshots
     console.log(doc.id, ' => ', doc.data());
 
-    const aTodo = {
+    const Todo = {
       id: doc.id,
       title: doc.data()['title'],
       isDone: doc.data()['isDone'],
       createdAt: doc.data()['createdAt'].toDate(),
     };
     // toLocaleTimeString('ko')
-    fetchedTodos.push(aTodo);
+    fetchedTodos.push(Todo);
   });
 
   return fetchedTodos;
@@ -63,7 +63,7 @@ export async function addTodo({ title }) {
   const newTodoData = {
     id: newTodoRef.id,
     title,
-    idDone: false,
+    isDone: false,
     createdAt: createdAtTimestamp.toDate(),
   };
 
@@ -121,7 +121,7 @@ export async function editTodo(id, { title, isDone }) {
 
   const updatedTodo = await updateDoc(todoRef, {
     title: title,
-    idDone: isDone,
+    isDone: isDone,
   });
 
   // 수정된 데이터 출력해줌
