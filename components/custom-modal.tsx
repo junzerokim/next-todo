@@ -17,8 +17,11 @@ const CustomModal = ({
   modalType: CustomModalType;
   onClose: () => void;
 }) => {
-  // 로딩 상태
-  const [isDone, setIsDone] = useState<Boolean>(false);
+  // 수정된 선택
+  const [isDone, setIsDone] = useState<boolean>(focusedTodo.isDone);
+
+  // 수정된 입력
+  const [editedTodoInput, setEditedTodoInput] = useState<string>(focusedTodo.title);
 
   const DetailModal = () => {
     return (
@@ -46,10 +49,22 @@ const CustomModal = ({
           <p>
             <span className="font-bold">id :</span> {focusedTodo.id}
           </p>
-          <Input autoFocus label="Todo" placeholder="Enter your Todo" variant="bordered" defaultValue={focusedTodo.title} />
+          <p>
+            Todo: {editedTodoInput} finished: {`isDone: ${isDone}`}
+          </p>
+          <Input
+            autoFocus
+            label="Todo"
+            placeholder="Enter your Todo"
+            variant="bordered"
+            isRequired
+            defaultValue={focusedTodo.title}
+            value={editedTodoInput}
+            onValueChange={setEditedTodoInput}
+          />
           <div className="flex py-2 space-x-4">
             <span className="font-bold">finished : </span>
-            <Switch defaultSelected={focusedTodo.isDone} aria-label="Automatic updates" />
+            <Switch defaultSelected={focusedTodo.isDone} onValueChange={setIsDone} aria-label="Automatic updates" />
           </div>
           <div className="flex py-1 space-x-4">
             <span className="font-bold">created at : </span>
