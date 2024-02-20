@@ -50,6 +50,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
 
   const router = useRouter();
 
+  // 할 일 추가
   const addTodoHandler = async (title: string) => {
     if (!todoAddEnable) return;
     setTodoAddEnable(false); // 중복 클릭 방지
@@ -66,8 +67,28 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       cache: 'no-store',
     });
     inputInit();
-    notifyTodoAddedEvent('할 일이 성공적으로 추가되었습니다.');
+    notifySuccessEvent('할 일이 성공적으로 추가되었습니다.');
     console.log(`할 일 추가 완료 : ${newTodoInput}`);
+  };
+
+  // 할 일 추가
+  const editTodoHandler = async (id: string, editedTitle: string, editedIsDone: boolean) => {
+    setIsLoading(true);
+
+    await new Promise((f) => setTimeout(f, 1000));
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        title: editedTitle,
+        isDone: editedIsDone,
+      }),
+      cache: 'no-store',
+    });
+
+    router.refresh();
+    setIsLoading(false);
+    notifySuccessEvent('할 일이 수정되었습니다!');
+    console.log(`할 일 수정 완료 : ${newTodoInput}`);
   };
 
   const inputInit = () => {
@@ -125,7 +146,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     );
   };
 
-  const notifyTodoAddedEvent = (message: string) => toast.success(message);
+  const notifySuccessEvent = (message: string) => toast.success(message);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -135,7 +156,15 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
         <ModalContent>
           {(onClose) =>
             currentModalData.focusedTodo && (
-              <CustomModal focusedTodo={currentModalData.focusedTodo} modalType={currentModalData.modalType} onClose={onClose} />
+              <CustomModal
+                focusedTodo={currentModalData.focusedTodo}
+                modalType={currentModalData.modalType}
+                onClose={onClose}
+                onEdit={async (id, title, isDone) => {
+                  await editTodoHandler(id, title, isDone);
+                  onClose();
+                }}
+              />
             )
           }
         </ModalContent>

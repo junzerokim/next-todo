@@ -3,7 +3,17 @@
 import React, { useState } from 'react';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, ModalHeader, ModalBody, ModalFooter, Modal, ModalContent, Input, Switch } from '@nextui-org/react';
+import {
+  Button,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Modal,
+  ModalContent,
+  Input,
+  Switch,
+  CircularProgress,
+} from '@nextui-org/react';
 import { VerticalDotsIcon } from './icons';
 import { useRouter } from 'next/navigation';
 import { FocusedTodoType, CustomModalType, Todo } from '@/types';
@@ -12,13 +22,18 @@ const CustomModal = ({
   focusedTodo,
   modalType,
   onClose,
+  onEdit,
 }: {
   focusedTodo: Todo;
   modalType: CustomModalType;
   onClose: () => void;
+  onEdit: (id: string, title: string, isDone: boolean) => void;
 }) => {
   // 수정된 선택
   const [isDone, setIsDone] = useState<boolean>(focusedTodo.isDone);
+
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // 수정된 입력
   const [editedTodoInput, setEditedTodoInput] = useState<string>(focusedTodo.title);
@@ -49,9 +64,6 @@ const CustomModal = ({
           <p>
             <span className="font-bold">id :</span> {focusedTodo.id}
           </p>
-          <p>
-            Todo: {editedTodoInput} finished: {`isDone: ${isDone}`}
-          </p>
           <Input
             autoFocus
             label="Todo"
@@ -64,7 +76,13 @@ const CustomModal = ({
           />
           <div className="flex py-2 space-x-4">
             <span className="font-bold">finished : </span>
-            <Switch defaultSelected={focusedTodo.isDone} onValueChange={setIsDone} aria-label="Automatic updates" />
+            <Switch
+              color="secondary"
+              defaultSelected={focusedTodo.isDone}
+              onValueChange={setIsDone}
+              aria-label="Automatic updates"
+            />
+            {isDone ? '완료' : '미완료'}
           </div>
           <div className="flex py-1 space-x-4">
             <span className="font-bold">created at : </span>
@@ -72,10 +90,18 @@ const CustomModal = ({
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" variant="flat" onPress={onClose}>
-            Edit
+          <Button
+            color="secondary"
+            variant="flat"
+            onPress={() => {
+              setIsLoading(true);
+              onEdit(focusedTodo.id, editedTodoInput, isDone);
+              onClose();
+            }}
+          >
+            {isLoading ? <CircularProgress size="sm" color="secondary" aria-label="Loading..." /> : 'Edit'}
           </Button>
-          <Button color="primary" onPress={onClose}>
+          <Button color="default" onPress={onClose}>
             Close
           </Button>
         </ModalFooter>
