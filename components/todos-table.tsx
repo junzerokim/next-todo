@@ -66,15 +66,15 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       }),
       cache: 'no-store',
     });
-    inputInit();
+    setNewTodoInput('');
+    router.refresh();
+    setIsLoading(false);
     notifySuccessEvent('할 일이 성공적으로 추가되었습니다.');
     console.log(`할 일 추가 완료 : ${newTodoInput}`);
   };
 
-  // 할 일 추가
+  // 할 일 수정
   const editTodoHandler = async (id: string, editedTitle: string, editedIsDone: boolean) => {
-    setIsLoading(true);
-
     await new Promise((f) => setTimeout(f, 1000));
     await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, {
       method: 'POST',
@@ -89,12 +89,6 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     setIsLoading(false);
     notifySuccessEvent('할 일이 수정되었습니다!');
     console.log(`할 일 수정 완료 : ${newTodoInput}`);
-  };
-
-  const inputInit = () => {
-    setNewTodoInput('');
-    router.refresh(); // POST 요청 후 페이지 새로고침
-    setIsLoading(false);
   };
 
   const disabledTodoAddButton = () => {
@@ -173,7 +167,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
   };
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-8">
       <ModalComponent />
       <ToastContainer
         position="top-right"
@@ -188,7 +182,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
         theme="dark"
         transition={Bounce}
       />
-      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+      <div className="flex flex-wrap w-full md:flex-nowrap gap-4">
         <Input
           type="text"
           label="To Do"

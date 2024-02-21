@@ -30,10 +30,10 @@ const CustomModal = ({
   onEdit: (id: string, title: string, isDone: boolean) => void;
 }) => {
   // 수정된 선택
-  const [isDone, setIsDone] = useState<boolean>(focusedTodo.isDone);
+  const [isDone, setIsDone] = useState(focusedTodo.isDone);
 
   // 로딩 상태
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 수정된 입력
   const [editedTodoInput, setEditedTodoInput] = useState<string>(focusedTodo.title);
@@ -96,10 +96,9 @@ const CustomModal = ({
             onPress={() => {
               setIsLoading(true);
               onEdit(focusedTodo.id, editedTodoInput, isDone);
-              onClose();
             }}
           >
-            {isLoading ? <CircularProgress size="sm" color="secondary" aria-label="Loading..." /> : 'Edit'}
+            {isLoading ? <CircularProgress size="sm" color="secondary" aria-label="Loading..." /> : '수정'}
           </Button>
           <Button color="default" onPress={onClose}>
             Close
