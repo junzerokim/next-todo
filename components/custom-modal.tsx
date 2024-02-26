@@ -23,11 +23,13 @@ const CustomModal = ({
   modalType,
   onClose,
   onEdit,
+  onDelete,
 }: {
   focusedTodo: Todo;
   modalType: CustomModalType;
   onClose: () => void;
   onEdit: (id: string, title: string, isDone: boolean) => void;
+  onDelete: (id: string) => void;
 }) => {
   // 수정된 선택
   const [isDone, setIsDone] = useState(focusedTodo.isDone);
@@ -41,16 +43,26 @@ const CustomModal = ({
   const DetailModal = () => {
     return (
       <>
-        <ModalHeader className="flex flex-col gap-1">{modalType}</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">Todo Detail</ModalHeader>
         <ModalBody>
-          <p>Detail</p>
+          <p>
+            <span className="font-bold">id :</span> {focusedTodo.id}
+          </p>
+          <p>
+            <span className="font-bold">todo :</span> {focusedTodo.title}
+          </p>
+          <div className="flex py-2 space-x-4">
+            <span className="font-bold">finished : </span>
+            {`${focusedTodo.isDone ? '완료' : '미완료'}`}
+          </div>
+          <div className="flex py-1 space-x-4">
+            <span className="font-bold">created at : </span>
+            <p>{`${focusedTodo.createdAt}`}</p>
+          </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={onClose}>
+          <Button color="default" onPress={onClose}>
             Close
-          </Button>
-          <Button color="primary" onPress={onClose}>
-            Action
           </Button>
         </ModalFooter>
       </>
@@ -59,7 +71,7 @@ const CustomModal = ({
   const EditModal = () => {
     return (
       <>
-        <ModalHeader className="flex flex-col gap-1">Edit</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">Todo Edit</ModalHeader>
         <ModalBody>
           <p>
             <span className="font-bold">id :</span> {focusedTodo.id}
@@ -110,16 +122,36 @@ const CustomModal = ({
   const DeleteModal = () => {
     return (
       <>
-        <ModalHeader className="flex flex-col gap-1">{modalType}</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">Todo Delete</ModalHeader>
         <ModalBody>
-          <p>Delete</p>
+          <p>
+            <span className="font-bold">id :</span> {focusedTodo.id}
+          </p>
+          <p>
+            <span className="font-bold">todo :</span> {focusedTodo.title}
+          </p>
+          <div className="flex py-2 space-x-4">
+            <span className="font-bold">finished : </span>
+            {`${focusedTodo.isDone ? '완료' : '미완료'}`}
+          </div>
+          <div className="flex py-1 space-x-4">
+            <span className="font-bold">created at : </span>
+            <p>{`${focusedTodo.createdAt}`}</p>
+          </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={onClose}>
-            Close
+          <Button
+            color="danger"
+            variant="flat"
+            onPress={() => {
+              setIsLoading(true);
+              onDelete(focusedTodo.id);
+            }}
+          >
+            {isLoading ? <CircularProgress size="sm" color="danger" aria-label="Loading..." /> : 'Delete'}
           </Button>
-          <Button color="primary" onPress={onClose}>
-            Action
+          <Button color="default" onPress={onClose}>
+            Close
           </Button>
         </ModalFooter>
       </>
